@@ -54,9 +54,11 @@ namespace KartGame.KartSystems
                 m_Acceleration = 0f;*/
             m_Acceleration = 1f;
 
-            if (Input.GetKey (KeyCode.LeftArrow) && !Input.GetKey (KeyCode.RightArrow))
+            //if (Input.GetKey (KeyCode.LeftArrow) && !Input.GetKey (KeyCode.RightArrow))
+            if (Input.acceleration.x < 0 )
                 m_Steering = -1f;
-            else if (!Input.GetKey (KeyCode.LeftArrow) && Input.GetKey (KeyCode.RightArrow))
+            //else if (!Input.GetKey (KeyCode.LeftArrow) && Input.GetKey (KeyCode.RightArrow))
+            else if (Input.acceleration.x > 0)
                 m_Steering = 1f;
             else
                 m_Steering = 0f;

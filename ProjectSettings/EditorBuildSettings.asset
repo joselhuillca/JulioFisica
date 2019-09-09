@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/PhysicsGame/Scenes/Menu_temas.unity
+    guid: 3398503bf67ec4b8185881ab44e4dfe9
+  - enabled: 1
     path: Assets/PhysicsGame/Scenes/MRU.unity
     guid: 52c4ae044b6b54b64a8a1f99f624b92c
   - enabled: 1
@@ -14,7 +17,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/PhysicsGame/Scenes/MParabolico.unity
     guid: 56550cf0240c54d16adb3c44741f7362
-  - enabled: 1
-    path: Assets/PhysicsGame/Scenes/Menu_temas.unity
-    guid: 3398503bf67ec4b8185881ab44e4dfe9
   m_configObjects: {}
