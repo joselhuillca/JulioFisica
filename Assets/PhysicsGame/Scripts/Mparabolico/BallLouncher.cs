@@ -1,17 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using System.Text;
 
 public class BallLouncher : MonoBehaviour
 {
     public Rigidbody ball;
     public Transform target;
     public float h = 25;
-    public float gravity = -18;
+    public float gravity = 18;
     public bool debugPath;
+    public TextMeshProUGUI info;
+    public TextMeshProUGUI info2;
+    StringBuilder m_StringBuilder = new StringBuilder(0, 300);
+    StringBuilder m_StringBuilder_info2 = new StringBuilder(0, 300);
+    float time = 0;
+    float velocidad = 0;
 
     void Start(){
         ball.useGravity = false;
+        gravity = -gravity;
     }
 
     void Update(){
@@ -21,12 +30,41 @@ public class BallLouncher : MonoBehaviour
         if (debugPath) {
 			DrawPath ();
 		}
+
+        m_StringBuilder.Clear();
+        m_StringBuilder.Append("Altura maxima: ");
+        m_StringBuilder.Append(h.ToString(".##"));
+        m_StringBuilder.Append(" m \n");
+
+        m_StringBuilder.Append("Gravedad: ");
+        m_StringBuilder.Append((-gravity).ToString(".##"));
+        m_StringBuilder.Append(" m/s^2 \n");
+
+        m_StringBuilder_info2.Clear();
+        m_StringBuilder_info2.Append("Tiempo: ");
+        if (time == 0)
+            m_StringBuilder_info2.Append(" ?");
+        else
+            m_StringBuilder_info2.Append(time.ToString(".##"));
+        m_StringBuilder_info2.Append(" segundos \n");
+
+        m_StringBuilder_info2.Append("Velocidad inicial: ");
+        if (velocidad == 0)
+            m_StringBuilder_info2.Append(" ?");
+        else
+            m_StringBuilder_info2.Append(velocidad.ToString(".##"));
+        m_StringBuilder_info2.Append(" m/s \n");
+
+        info.text = m_StringBuilder.ToString();
+        info2.text = m_StringBuilder_info2.ToString();
     }
 
     void Launch(){
         Physics.gravity = Vector3.up*gravity;
         ball.useGravity = true;
         ball.velocity = CalculateLaunchData().initialVelocity;
+        time = CalculateLaunchData().timeToTarget;
+        velocidad = ball.velocity.magnitude;
     }
 
     LaunchData CalculateLaunchData(){
