@@ -325,6 +325,12 @@ namespace KartGame.Track
 
                 racer.HitStartFinishLine ();
             }
+            if (checkpoint.isFinishLine)
+            {   
+                StopRace ();
+                panelEndGame.gameObject.SetActive (true);
+                racer.HitStartFinishLine ();
+            }
         }
 
         bool CanEndRace ()

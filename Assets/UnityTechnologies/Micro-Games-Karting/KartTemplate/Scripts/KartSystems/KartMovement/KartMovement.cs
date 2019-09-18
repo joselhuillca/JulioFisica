@@ -163,7 +163,7 @@ namespace KartGame.KartSystems
                 //Debug.Log(deltaTime);
             };
             // Para MRUV
-            if (m_Racer.GetLapTime() > 0.5f && m_ModifiedStats.acceleration == 1){
+            if (m_Racer.GetLapTime() > 0f && m_Racer.GetLapTime() < 0.5f && m_ModifiedStats.acceleration == 1){
                 if (ace){
                     acelerar_mruv += 1.5f;
                     ace = false;
@@ -171,6 +171,9 @@ namespace KartGame.KartSystems
                 m_ModifiedStats.acceleration = acelerar_mruv;
                 //Debug.Log(deltaTime);
             };
+            if (m_Racer.GetLapTime()>0.5f){
+                ace = true;
+            }
             
             m_CurrentGroundInfo = CheckForGround (deltaTime, rotationStream, Vector3.zero);
             

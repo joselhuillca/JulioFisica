@@ -16,6 +16,7 @@ namespace KartGame.Track
 
         [Tooltip ("Whether or not this checkpoint is the start/finish line.")]
         public bool isStartFinishLine;
+        public bool isFinishLine;
         [Tooltip ("The layers to check for a kart passing through this trigger.")]
         public LayerMask kartLayers;
         [Tooltip("The layers to check for the ground.  Used to determine where the reset position for a kart is.")]
