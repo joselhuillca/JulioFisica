@@ -7,8 +7,10 @@ using TMPro;
 using System.Text;
 using UnityEngine.UI;
 
+
 namespace KartGame.Track
 {
+ 
     /// <summary>
     /// A MonoBehaviour to deal with all the time and positions for the racers.
     /// </summary>
@@ -38,21 +40,28 @@ namespace KartGame.Track
         public GameObject popUpPreguntas;
         public int tema = 1;
         // Deberia de haber una base de preguntas:
-        string[] questions_mru = {"Cual afirmacion es correcta:", 
-                                "Cuando en un movimiento la velocidad no varía es:"};
-        string[,] answersOptions_mru = {{"velocidad=tiempo/distancia", "tiempo=velocidad/distacia", "distancia=velocidad*tiempo"},
-                                        {"Rectilíneo.", "Uniforme.", "Decelerado."}};
-        int[] answers_mru = {2, 1};
+        string[] questions_mru = {"Un movimiento es rectilíneo uniforme cuando:", 
+                                "La velocidad constante indica",
+                                "Cuál es la diferencia entre distancia recorrida y desplazamiento"};
+        string[,] answersOptions_mru = {{"Su trayectoria es una recta y además su velocidad varia de manera uniforme.", "Su velocidad es constante y además su trayectoria es una recta", "Su velocidad es constante","Su trayectoria es una recta"},
+                                        {"Que cambia el módulo pero no la dirección y sentido", "Que no cambia de módulo, dirección y sentido", "Que no cambia de módulo ni dirección pero si sentido.","N.A."},
+                                        {"La distancia es escalar y el desplazamiento es vectorial","La distancia señala el incio y el desplazamiento indica el final", "La distancia es positiva y el desplazamiento es negativo", "N.A."}};
+        int[] answers_mru = {1, 2, 0};
 
-        string[] questions_mruv = {"Cuando a velocidad y la aceleración tienen el mismo sentido, el movimiento:", 
-                                "En el movimiento Rectílineo Uniformemente Variado, la aceleración:"};
-        string[,] answersOptions_mruv = {{"no tiene aceleracion", "es acelerado", "es desacelerado"},
-                                        {"aumenta con el tiempo", "es constante", "disminuye con el tiempo"}};
-        int[] answers_mruv = {1, 1};
+        string[] questions_mruv = {"¿En qué movimiento la velocidad no varía?", 
+                                "El un movimiento rectilíneo uniformemente variado , la aceleración",
+                                "Un movimiento es desacelerado cuando la velocidad y la aceleración tienen sentidos",
+                                "cuando la velocidad y la aceleración tienen el mismo sentido el movimiento"};
+        string[,] answersOptions_mruv = {{"Rectilíneo", "Acelerado", "Desacelerado","Uniforme"},
+                                        {"Aumenta con el tiempo", "Es constante", "Disminuye con el tiempo", "N.A."},
+                                        {"Opuestos", "Iguales", "Paralelos", "N.A."},
+                                        {"No tiene aceleración", "Es acelerado", "Es desacelerado", "N.A."}};
+        int[] answers_mruv = {3, 1, 0, 1};
         public TextMeshProUGUI preguntaPopUp;
         public Text message;
         public List<Toggle> listapreguntas = new List<Toggle> ();
         int currentLapAnswer;
+        List<int> randPreguntas = new List<int>();
 
         float acelerar = 1f;
         public GameObject panelEndGame;
@@ -122,6 +131,7 @@ namespace KartGame.Track
 
         void Awake ()
         {
+            
             if(checkpoints.Count < 3)
                 Debug.LogWarning ("There are currently " + checkpoints.Count + " checkpoints set on the Track Manager.  A minimum of 3 is recommended but kart control will not be enabled with 0.");
             
@@ -164,7 +174,26 @@ namespace KartGame.Track
 
             m_Input = input as IInput;
             m_KartMovement = kartMovement as IKartInfo;
+
+            if (tema == 1){
+                // mru
+                for (int i = 0; i < questions_mru.Length; i++)
+                {
+                    randPreguntas.Add(i);
+                }
+                //randPreguntas.Shuffle();
+            }   
+            if (tema == 2){
+                // mruv
+                for (int i = 0; i < questions_mruv.Length; i++)
+                {
+                    randPreguntas.Add(i);
+                }
+                //randPreguntas.Shuffle();
+            }
         }
+
+        
 
         void Update(){
             m_StringBuilder.Clear();
@@ -241,19 +270,22 @@ namespace KartGame.Track
         }
 
         void verifyAnswer(int[] answers){
-            if (listapreguntas[answers[currentLapAnswer-1]].isOn){
+            if (listapreguntas[answers[randPreguntas[currentLapAnswer-1]]].isOn){
                         popUpPreguntas.gameObject.SetActive (false);
                         Time.timeScale = 1f;
                         // Detener el tiempo?, una opcion
             }else{message.text = "Respuesta Incorrecta!(Estas perdiendo tiempo)";}
         }
         void loadOptionsQuestions(int racerCurrentLap, string[] questions, string[,] answersOptions){
-            preguntaPopUp.text = questions[racerCurrentLap-1];
+            preguntaPopUp.text = questions[randPreguntas[racerCurrentLap-1]];
             int i = 0;
             foreach (Toggle option in listapreguntas){
-                option.GetComponentInChildren<Text> ().text = answersOptions[racerCurrentLap-1,i];
+                option.GetComponentInChildren<Text> ().text = answersOptions[randPreguntas[racerCurrentLap-1],i];
                 i = i + 1;
             }
+            message.text = "";
+            popUpPreguntas.gameObject.SetActive (true);
+            Time.timeScale = 0f;
         }
         public void AnswerQuestion(){
             switch (tema){
@@ -301,9 +333,9 @@ namespace KartGame.Track
                     }
                     if (racerCurrentLap < raceLapTotal){
                         switch (tema){
-                            case 1:
-                                loadOptionsQuestions(racerCurrentLap, questions_mru, answersOptions_mru);
-                                break;
+                            //case 1:
+                            //    loadOptionsQuestions(racerCurrentLap, questions_mru, answersOptions_mru);
+                            //    break;
                             case 2:
                                 loadOptionsQuestions(racerCurrentLap, questions_mruv, answersOptions_mruv);
                                 break;
@@ -312,12 +344,9 @@ namespace KartGame.Track
                                 break;
                         }
                         
-                        message.text = "";
-                        popUpPreguntas.gameObject.SetActive (true);
-                        Time.timeScale = 0f;
+                        
                     }
                 }
-
                 if (CanEndRace ()){  
                     StopRace ();
                     panelEndGame.gameObject.SetActive (true);
@@ -325,11 +354,20 @@ namespace KartGame.Track
 
                 racer.HitStartFinishLine ();
             }
+
+            Debug.Log("Entro ckeckpoint !");
             if (checkpoint.isFinishLine)
             {   
                 StopRace ();
                 panelEndGame.gameObject.SetActive (true);
                 racer.HitStartFinishLine ();
+            }
+
+            if (!checkpoint.isStartFinishLine && !checkpoint.isFinishLine && tema==1){
+                int racerCurrentLap = Random.Range(1, questions_mru.Length);
+                Debug.Log(racerCurrentLap);
+                currentLapAnswer = racerCurrentLap;
+                loadOptionsQuestions(racerCurrentLap, questions_mru, answersOptions_mru);
             }
         }
 
@@ -379,4 +417,6 @@ namespace KartGame.Track
             kartRepositioner.OnRepositionComplete -= ReenableControl;
         }
     }
+
+    
 }
